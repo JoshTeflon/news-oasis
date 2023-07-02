@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button, Rating } from '..'
-import { ThumbsDown, ThumbsUp } from '../../icons'
 
 export interface AuthorDetails {
     name: string
@@ -53,29 +52,6 @@ const Card: React.FC<CardProps & CardFunctions> = ({ story_date, title, excerpt,
                     <p>{author?.phone}</p>
                 </div>
                 <Rating starred={ratings?.rating ? ratings?.rating : 0} />
-                {/* <div className='flex items-center'>
-                    <Rating starred={ratings?.rating ? ratings?.rating : 0} />
-                    <div className='flex items-center font-light space-x-2 ml-2'>
-                        <div className='flex items-center space-x-1'>
-                            <Button
-                                variant='naked'
-                                aria-label='thumbs up'
-                            >
-                                <ThumbsUp />
-                            </Button>
-                            <span>{ratings?.upvotes}</span>
-                        </div>
-                        <div className='flex items-center space-x-1'>
-                            <Button
-                                variant='naked'
-                                aria-label='thumbs down'
-                            >
-                                <ThumbsDown />
-                            </Button>
-                            <span>{ratings?.downvotes}</span>
-                        </div>
-                    </div>
-                </div> */}
             </div>
         </div>
     </div>
