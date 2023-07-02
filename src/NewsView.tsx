@@ -2,10 +2,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Rating } from './components/interface';
 import { ThumbsDown, ThumbsUp } from './components/icons';
-import { CardProps } from './components/interface/Card/Card';
+import { NewsProps } from './News';
+import { toast } from 'react-toastify';
 
 const NewsView = () => {
-    const [newsValue, setNewsValue] = useState<CardProps>({})
+    const [newsValue, setNewsValue] = useState<NewsProps | any>({})
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<Error | null>(null)
 
@@ -19,16 +20,15 @@ const NewsView = () => {
         })
         .then((response: Response) => {
           if (response.ok) {
-            console.log('response', response)
             return response.json();
           }
           throw response;
         })
-        .then((data: any) => {
+        .then((data: NewsProps) => {
           setNewsValue(data)
         })
-        .catch((error: Error) => {
-          console.log("Error:", error)
+        .catch((error: Error |any) => {
+          toast.error(error)
           setError(error)
         })
         .finally(() => {
@@ -40,7 +40,7 @@ const NewsView = () => {
         handleGetUniqueNews()
     }, [handleGetUniqueNews])
 
-    const handleUpdateVotes = useCallback(async (newsId: string | undefined, updatedData: CardProps) => {
+    const handleUpdateVotes = useCallback(async (newsId: string | undefined, updatedData: NewsProps, type: string) => {
         await fetch(`https://649f7200245f077f3e9d8df9.mockapi.io/api/v1/news/${newsId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -48,13 +48,19 @@ const NewsView = () => {
         })
           .then((response) => {
             if (response.ok) {
-              alert('News item updated successfully.');
-              handleGetUniqueNews()
+                if (type === 'upvote') {
+                    toast.success('🌱Up vote! Updated rating');
+                } else {
+                    toast.success('🚩Down vote! Updated rating');
+                }
+                handleGetUniqueNews()
             } else {
-              throw new Error('Failed to update news item.');
+                toast.error('Failed to update news item.');
+                throw new Error('Failed to update news item.');
             }
           })
           .catch((error) => {
+            toast.error(error)
             console.log('Error:', error);
           });
       }, [handleGetUniqueNews]);
@@ -65,15 +71,18 @@ const NewsView = () => {
         if(updatedNews?.ratings) {
             if (type === 'upvote') {
                 updatedNews.ratings.upvotes += 1;
+                updatedNews.ratings.rating =
+                (updatedNews.ratings.upvotes - updatedNews.ratings.downvotes) / 5;
+                handleUpdateVotes(newsId, updatedNews, 'upvote');
               } else if (type === 'downvote') {
                 updatedNews.ratings.downvotes += 1;
+                updatedNews.ratings.rating =
+                (updatedNews.ratings.upvotes - updatedNews.ratings.downvotes) / 5;
+                handleUpdateVotes(newsId, updatedNews, 'downvote');
               }
 
-              updatedNews.ratings.rating =
-                (updatedNews.ratings.upvotes - updatedNews.ratings.downvotes) / 5;
+              
         }
-      
-        handleUpdateVotes(newsId, updatedNews);
     };
       
 

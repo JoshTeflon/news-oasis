@@ -2,9 +2,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Input } from './components/interface';
 import { Search } from './components/icons';
+import { CardProps } from './components/interface/Card/Card';
+import { toast } from 'react-toastify';
+
+export type NewsProps = CardProps & {
+    id: string
+}
 
 const News = () => {
-    const [news, setNews] = useState<any[]>([])
+    const [news, setNews] = useState<NewsProps[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<Error | null>(null)
     const [search, setSearch] = useState<string>('')
@@ -17,17 +23,17 @@ const News = () => {
           headers: {'content-type':'application/json'},
         })
         .then((response: Response) => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw response;
+            if (response.ok) {
+                return response.json();
+            }
+            throw response;
         })
-        .then((data: any[]) => {
-          setNews(data)
+        .then((data: NewsProps[]) => {
+            setNews(data)
         })
-        .catch((error: Error) => {
-          console.log("Error:", error)
-          setError(error)
+        .catch((error: Error | any) => {
+            toast.error(error)
+            setError(error)
         })
         .finally(() => {
           setLoading(false);
@@ -43,7 +49,7 @@ const News = () => {
 
     return (
         <div>
-            <div className='container w-full md:w-3/4 lg:w-1/2 pt-6'>
+            <div className='container w-full md:w-3/4 lg:w-1/2 pt-6 px-4'>
                 <Input
                 icon={<Search width={20} />}
                 placement='end'
