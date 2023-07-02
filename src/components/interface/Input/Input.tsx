@@ -20,7 +20,7 @@ const Input: React.FC<InputProps> = forwardRef((props, ref) => {
     icon = null,
     placement = 'start',
     onChange,
-    type,
+    type = 'text',
     ...rest
   } = props
   const inputRef = useRef<HTMLInputElement>(null)
@@ -50,7 +50,7 @@ const Input: React.FC<InputProps> = forwardRef((props, ref) => {
         )}
         <input
             className={classnames(
-            'w-full h-full p-2 text-text text-sm focus:outline-none outline-none placeholder:text-xs placeholder:opacity-50 rounded-md',
+            'w-full h-full p-2 text-text text-sm focus:outline-none outline-none placeholder:text-sm placeholder:opacity-50 rounded-md',
             {
                 '!pl-12': icon && placement === 'start',
                 '!pr-12': icon && placement === 'end'

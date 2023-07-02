@@ -12,7 +12,7 @@ import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { StaleWhileRevalidate } from 'workbox-strategies';
+import { StaleWhileRevalidate, NetworkFirst } from 'workbox-strategies';
 
 declare const self: ServiceWorkerGlobalScope;
 
@@ -57,13 +57,36 @@ registerRoute(
 // precache, in this case same-origin .png requests like those from in public/
 registerRoute(
   // Add in any other file extensions or routing criteria as needed.
-  ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'),
+  ({ url }) => url.origin === self.location.origin && (url.pathname.endsWith('.png') || url.pathname.endsWith('.svg')),
   // Customize this strategy as needed, e.g., by changing to CacheFirst.
   new StaleWhileRevalidate({
     cacheName: 'images',
     plugins: [
       // Ensure that once this runtime cache reaches a maximum size the
       // least-recently used images are removed.
+      new ExpirationPlugin({ maxEntries: 50 }),
+    ],
+  })
+);
+
+// ...
+
+// An example runtime caching route for mock API GET requests
+registerRoute(
+  // Add in any other routing criteria as needed.
+  ({ url, request }) => {
+    // Customize this condition to match your mock API URL.
+    return (
+      url.origin === 'https://649f7200245f077f3e9d8df9.mockapi.io' &&
+      request.method === 'GET'
+    );
+  },
+  // Customize this strategy as needed.
+  new NetworkFirst({
+    cacheName: 'mock-api-cache',
+    plugins: [
+      // Ensure that once this runtime cache reaches a maximum size the
+      // least-recently used responses are removed.
       new ExpirationPlugin({ maxEntries: 50 }),
     ],
   })

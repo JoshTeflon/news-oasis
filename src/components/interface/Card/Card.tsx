@@ -15,41 +15,46 @@ export interface RatingsDetails {
 }
 
 export interface CardProps {
-    date?: string
+    story_date?: string
     title?: string
     excerpt?: string
-    content?: string
+    story_content?: string
     author?: AuthorDetails
     ratings?: RatingsDetails
 }
 
-// const Card: React.FC<CardProps> = ({date, title, excerpt, content, author}) => {
-const Card: React.FC<CardProps> = () => {
+export interface CardFunctions {
+    ReadMore: () => void
+}
+
+const Card: React.FC<CardProps & CardFunctions> = ({ story_date, title, excerpt, story_content, author, ratings, ReadMore }) => {
   return (
     <div className='w-full bg-white border border-[#213f7d0f] shadow-custom'>
         <div className='py-2 md:py-3 px-4 md:px-6'>
-            <span className='text-primary text-xs font-light opacity-50 flex justify-end'>2022-03-21</span>
+            <span className='text-primary text-xs font-light opacity-50 flex justify-end'>{story_date}</span>
             <div className='mt-2'>
-                <h2 className='text-base font-medium'>Sample News Title 1</h2>
-                <h3 className='text-sm'>"This is a sample news article about a topic of interest."</h3>
+                <h2 className='text-base font-medium'>{title}</h2>
+                <h3 className='text-sm'>{excerpt}</h3>
             </div>
             <div className='my-4 text-sm font-light'>
-                <p className='mb-1'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed suscipit leo eu risus volutpat dapibus.</p>
+                <p className='content-container mb-1'>{story_content}</p>
                 <Button
                     variant='link'
                     className='text-secondary opacity-70'
                     size='xs'
                     aria-label='read more'
+                    onClick={ReadMore}
                 >Read more☞</Button>
             </div>
             <div className='text-xs flex flex-col md:flex-row md:justify-between'>
                 <div className='mb-2 md:mb-0'>
-                    <p>John Doe</p>
-                    <p>johndoe@example.com</p>
-                    <p>+1 123-456-7890</p>
+                    <p>{author?.name}</p>
+                    <p>{author?.email}</p>
+                    <p>{author?.phone}</p>
                 </div>
-                <div className='flex items-center'>
-                    <Rating starred={4} />
+                <Rating starred={ratings?.rating ? ratings?.rating : 0} />
+                {/* <div className='flex items-center'>
+                    <Rating starred={ratings?.rating ? ratings?.rating : 0} />
                     <div className='flex items-center font-light space-x-2 ml-2'>
                         <div className='flex items-center space-x-1'>
                             <Button
@@ -58,7 +63,7 @@ const Card: React.FC<CardProps> = () => {
                             >
                                 <ThumbsUp />
                             </Button>
-                            <span>10</span>
+                            <span>{ratings?.upvotes}</span>
                         </div>
                         <div className='flex items-center space-x-1'>
                             <Button
@@ -67,27 +72,11 @@ const Card: React.FC<CardProps> = () => {
                             >
                                 <ThumbsDown />
                             </Button>
-                            <span>2</span>
+                            <span>{ratings?.downvotes}</span>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
-            {/* <span>{date}</span>
-            <div>
-                <h2>{title}</h2>
-                <h3>{excerpt}</h3>
-            </div>
-            <div>
-                <p>{content}</p>
-            </div>
-            <div>
-                <div>
-                    <p>{author?.name}</p>
-                    <p>{author?.email}</p>
-                    <p>{author?.phone}</p>
-                </div>
-                <div></div>
-            </div> */}
         </div>
     </div>
   )
